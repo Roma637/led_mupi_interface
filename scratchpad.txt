@@ -1,0 +1,5 @@
+import parser as p
+import tabulate as t
+h = p.separator(p.sorter(p.parser('test.txt')))
+print(h)
+t.table('R', h)
