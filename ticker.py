@@ -1,13 +1,4 @@
 
-def R_on(value):
-    print(f"red is now at {value}")
-
-def B_on(value):
-    print(f"blue is now at {value}")
-
-def G_on(value):
-    print(f"green is now at {value}")
-
 def executor(all, cbfunc):
 
     #all is a dictionary of dictionaries
@@ -26,7 +17,7 @@ def executor(all, cbfunc):
     for tick in range(duration+1):
 
         print(f"Tick - {tick} - ")
-
+        cbfunc(0, "START", tick)
         for col in all.keys():
 
             print(f"    for colour {col}", end=" - ")
@@ -38,3 +29,4 @@ def executor(all, cbfunc):
 
             # hash1[col](hash1["scala"](current_functions[col](tick)))
             cbfunc(current_functions[col](tick), col, tick)
+        cbfunc(0, "END", tick)

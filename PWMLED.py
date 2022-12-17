@@ -8,7 +8,7 @@ def setDutyCycle(pin, dt=2 ** 15):
     return pin
 
 #sets a pin as pwm
-def setPinOut(pin, dt=0, ff=50):
+def setPinOut(pin, dt=0, ff=5000):
     pwm = pwmio.PWMOut(pin, frequency=ff)
     setDutyCycle(pwm, dt)
     return pwm

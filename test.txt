@@ -1,9 +1,12 @@
-0 R 50
-0 G 50
-0 B 50
-2 R 100 Ramp
-2 G 100 Ramp
-2 B 100 Ramp
-4 R 20
-4 G 20
-6 B 20
+0 R 255 Ramp
+0 G 0 Ramp
+0 B 0
+50 R 0
+50 G 255 Ramp
+50 B 0 Ramp
+100 R 0
+100 G 0
+100 B 255 Ramp
+150 R 0
+150 G 0
+150 B 0

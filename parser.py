@@ -30,10 +30,10 @@ def stepfn(start_int, end_int, start_time, end_time):
 
 def rampfn(start_int, end_int, start_time, end_time):
 
-    #rise over run
-    gradient = (end_int - start_int) / (end_time - start_time)
-
     def inner(time):
+        #rise over run
+        gradient = (end_int - start_int) / (end_time - start_time)
+
         ret = start_int + gradient * (time - start_time)
         print(f"ramp function currently doing {ret}")
         return ret
