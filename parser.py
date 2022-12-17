@@ -23,6 +23,7 @@ def stepfn(start_int, end_int, start_time, end_time):
 
     #int stands for intensity
     def inner(time):
+        print(f"step function for intensity {start_int}")
         return start_int
 
     return inner
@@ -33,21 +34,8 @@ def rampfn(start_int, end_int, start_time, end_time):
     gradient = (end_int - start_int) / (end_time - start_time)
 
     def inner(time):
-        if time <= start_time:
-            return start_int
-        elif end_time <= time:
-            return end_int
-        else:
-            ret = start_int + gradient * (time - start_time)
-            return ret
+        ret = start_int + gradient * (time - start_time)
+        print(f"ramp function currently doing {ret}")
+        return ret
 
     return inner
-
-def redon(value):
-    print(f"red is now at {value}")
-
-def blueon(value):
-    print(f"blue is now at {value}")
-
-def greenon(value):
-    print(f"green is now at {value}")

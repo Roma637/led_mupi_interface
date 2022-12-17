@@ -1,5 +1,9 @@
 import parser as p
 import tabulate as t
+import ticker as tk
 h = p.separator(p.sorter(p.parser('test.txt')))
 print(h)
-t.table('R', h)
+all = t.all_colours(h)
+print(all)
+tk.executor(all)
+t.all_colours(p.separator(p.sorter(p.parser('test.txt'))))["B"][0](3)
