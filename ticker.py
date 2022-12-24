@@ -3,6 +3,8 @@ def executor(all, cbfunc):
 
     #all is a dictionary of dictionaries
 
+    #all takes in 
+
     duration = 0
 
     for set_of_ticks in all.values():

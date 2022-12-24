@@ -2,6 +2,8 @@ from parser import rampfn, stepfn
 
 def table(colour, complete):
 
+    #complete looks like R:{}, G:{}
+
     work_with = complete[colour]
 
     final_table = {}
