@@ -3,23 +3,25 @@ from led_play3 import *
 
 class RunPlan():
     def __init__(self, exps1):
-        #exps1 is an array of expressions 
+        #exps1 is an array of expressions (strings)
         self.exps = [expression(h) for h in exps1]
-        # self.routs = [evaluator(exp.ex for exp in self.exps)]
-    
-    def __getitems__(self, tk):
-        resultant = {}
+        # self.seqs = [(evaluator(exp.ex)) for exp in self.exps]
 
-        for arr in self.routs:
-            for rt in arr:
-                to_add = rt[tk]
-                for chan in to_add.keys():
-                    if chan in resultant.keys():
-                        resultant[chan] += to_add[chan]
-                    else:
-                        resultant[chan] = to_add[chan]
+    # def unfold(self,item):
 
-        return resultant
+    #     final = []
+
+    #     if type(item)==CompoundRout:
+    #         # print(f"{item} is a compound root")
+    #         # print(f"routs are {item.routs}")
+    #         final.extend(self.unfold(item.routs))
+    #     elif type(item)==Rout:
+    #         final.append(item)
+    #     elif type(item)==list:
+    #         for thing in item:
+    #             final.extend(self.unfold(thing))
+
+    #     return final
 
 def helper(arr1, routs):
 
@@ -55,39 +57,40 @@ def evaluator(exp, routs):
 
     #OKAY SO ARR1 NOW HAS ROUTS IN IT!
 
-    print(arr1)
-    print()
+    # print(arr1)
+    # print()
     # print("----------FINISHED WITH HELPER----------")
 
     for place in range(len(arr1)):
         if type(arr1[place]) == list:
-            print(f"encountered list {arr1[place]}")
+            # print(f"encountered list {arr1[place]}")
             arr1[place] = evaluator(arr1[place], routs)
-            print(f"the list is now {arr1[place]}")
-            print()
+            # print(f"the list is now {arr1[place]}")
+            # print()
     
     accumulator = arr1.pop(0)
-    print(f"at the start, accumulator is {accumulator}")
-    print()
+    # print(f"at the start, accumulator is {accumulator}")
+    # print()
     
     for ii in range(len(arr1)//2):
         # print(f"{arr1[2*ii]}")
         # print(f"{arr1[2*ii + 1]}")
 
         other = arr1[1]
-        print(f"other is {other} and its type is {type(other)}")
+        # print(f"other is {other} and its type is {type(other)}")
 
-        to_carry_out = f"accumulator" + arr1[0] + f"{arr1[1]}"
-        print(to_carry_out)
-        print()
+        # to_carry_out = f"accumulator" + arr1[0] + f"{arr1[1]}"
+        # print("going to carry out "+to_carry_out)
+        # print()
 
         accumulator = eval(f"accumulator {arr1[0]} other")
         arr1.pop(0)
         arr1.pop(0)
         
-        print(f"accumulator is now {accumulator}")
-        print()
+        # print(f"accumulator is now {accumulator}")
+        # print()
 
+    # print(f"going to return {accumulator}")
     return accumulator
 
 def expression(ex1):

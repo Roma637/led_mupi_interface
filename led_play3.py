@@ -15,7 +15,7 @@ class Tick():
     def __add__(self, val1):
 
         val2 = self.valueish(val1)
-        print(f"adding {self} to {val1} (self's value is {self.value} val1's value is {val2})")
+        # print(f"adding {self} to {val1} (self's value is {self.value} val1's value is {val2})")
 
         if type(self) == Tick : return(Tick(self.value + val2))
         if type(self) == PreTick : return(PreTick(self.value + val2))
@@ -36,6 +36,7 @@ class Tick():
     
     def __mul__(self, val1):
         val2 = self.valueish(val1)
+        # print(f"multiplying {self} to {val1} (self's value is {self.value} val1's value is {val2})")
 
         if type(self) == Tick : return(Tick(self.value * val2))
         if type(self) == PreTick : return(PreTick(self.value * val2))
@@ -143,7 +144,7 @@ class Intensity():
         #did this cause the error?
 
 class Rout():
-    def __init__(self, name, data, pretick=0,posttick=0,repeat=3, begin=0):
+    def __init__(self, name, data, pretick=0,posttick=0,repeat=3, begin:int=0):
         self.name = name; 
         self.data = data; #array of arrays that have tick,col,intensity
         self.kind = "Rout"
@@ -154,27 +155,31 @@ class Rout():
         return("Rout(" + f"name=\"{self.name}\", data={self.data}, pretick={self.pretick}, posttick={self.posttick}, repeat={self.repeat}, begin={self.begin}" + ")")
     
     def __getitem__(self, val1):
-        self.getvalues(Tick(val1))
+        # print(f"getitem for {self.name} is happening for {val1}")
+        return self.getvalues(Tick(val1))
 
     def getvalues(self, tick1):
+        # print(f"getvalues calculation for {self.name} is happening for {tick1}")
         width1 = self.spanv()
-        print(f"HHH - ( {self.pretick} + {width1} * {self.repeat} + {self.posttick} + {self.begin} )")
+        # print(f"HHH - ( {self.pretick} + {width1} * {self.repeat} + {self.posttick} + {self.begin} )")
         if self.begin <= tick1 <= ( self.pretick + width1 * self.repeat + self.posttick + self.begin ) :
             tick2 =  (tick1 -  self.pretick) - self.begin 
-            print(f"tick2={tick2}  tick1={tick1} self.pretick={self.pretick}  self.begin={self.begin} ")
+            # print(f"tick2={tick2}  tick1={tick1} self.pretick={self.pretick}  self.begin={self.begin} ")
             if tick2 < 1 : return(None)
+            # if tick2 > ( self.pretick + width1 * self.repeat + self.begin ) : return None
             # ToDo ; implement mod
             tick3_2 = (tick2 - self.minv()) % self.spanv()
             tick3 = ( tick3_2 + self.pretick + self.minv() ) + self.begin
             vv1 = [ii for ii in self.data if ii[0] <= tick3]
             vv2 = [ii for ii in self.data if ii[0] > tick3]
+            # print(f"vv1={vv1}   vv2={vv2}   tick3={tick3}   ")
             hh1 = {} ; hh2 = {}
             for ii in vv1 : hh1[ii[1]] = ii
             for ii in vv2 : 
                 if ii[1] not in hh2.keys() : hh2[ii[1]] = ii
             hh3 = {}
             for ii in hh1.keys():
-                print(f"GGG hh1={hh1}   hh2={hh2}  tick3={tick3} spanv={self.spanv()}  tick2={tick2}   hh[ii][0]={hh1[ii][0]}   ii={ii} self.maxv={self.maxv()}  self.minv={self.minv()}")
+                # print(f"GGG hh1={hh1}   hh2={hh2}  tick3={tick3} spanv={self.spanv()}  tick2={tick2}   hh[ii][0]={hh1[ii][0]}   ii={ii} self.maxv={self.maxv()}  self.minv={self.minv()}")
                 if len(hh1[ii]) < 4 :
                     hh3[ii] = hh1[ii][2]
                 else :
@@ -202,7 +207,7 @@ class Rout():
         return(v1)
 
     def spanv(self):
-        return(self.maxv() - self.minv())
+        return(self.maxv() - self.minv() + 1)
 
     def clone(self):
         aa1 = Rout(self.name, self.data[:], self.pretick.value, self.posttick.value, self.repeat)
@@ -230,7 +235,7 @@ class Rout():
     def __lshift__(self, num1): #<<
         if self.kindish(num1)=="Rout":
             aa1 = num1.clone()
-            aa1.begin =  self.pretick + self.posttick + (self.repeat * self.spanv()) + self.begin + aa1.begin
+            aa1.begin =  (self.pretick + self.posttick + (self.spanv() * self.repeat)) + ( self.begin + aa1.begin )
             return(CompoundRout([self, aa1], "append"))
 
         else: #assumes that it's an integer
@@ -290,13 +295,34 @@ class Rout():
             return "Unknown"
 
 class CompoundRout():
-    def __init__(self, routs, kind): 
+    def __init__(self, routs, oper): 
         #routs is an array of 2 routs
         #kind is either append or merge
         #the purpose of this class is to distribute
         self.routs = routs
-        self.kind = kind
+        # print("----new compound root object created----")
+        # print(f"routs are {routs}")
+        # print("----------------------------------------")
+        self.kind = "CompoundRout"
+        self.oper = oper
 
+    def __getitem__(self, tk):
+        final = {}
+        for item in self.routs:
+
+            # print(f"item is {item}")
+            to_add = item[tk]
+            # print(f"to_add is {to_add}")
+            if to_add==None:
+                pass
+            else:
+                for chan in to_add.keys():
+                    if chan in final.keys():
+                        final[chan] += to_add[chan]
+                    else:
+                        final[chan] = to_add[chan]
+        return final
+                
     def __mul__(self, val1):
 
         if rout.kindish(val1)=="Rout":
@@ -328,15 +354,16 @@ class CompoundRout():
 
     def __lshift__(self, num1): #<<
         if self.kindish(num1)=="Rout":
-
             bb1 = self.clone()
-
             for index in range(len(bb1.routs)):
                 rout = bb1.routs[index]
+                # print(f"rout is {rout}")
                 aa1 = num1.clone()
-                aa1.begin =  rout.pretick + rout.posttick + (rout.repeat * rout.spanv()) + rout.begin + aa1.begin
+                # print(f"ABCDDD={rout.begin}      {aa1.begin}")
+                tmp1 = (rout.begin + aa1.begin)
+                # print(f"tmp1={tmp1} = {rout.begin} +++++ {aa1.begin}")
+                aa1.begin =  (rout.pretick + rout.posttick + (rout.spanv() * rout.repeat)) + (rout.begin + aa1.begin)
                 bb1.routs[index] = CompoundRout([rout, aa1], "append")
-
             return bb1
         else: #assumes that it's an integer
             bb1 = self.clone()
@@ -392,6 +419,11 @@ class CompoundRout():
                 aa1 = num1.clone()
                 bb1.routs[index] = CompoundRout([rout,aa1], "merge")
             return bb1
+        elif self.kindish(num1) == "CompoundRout":
+            aa1 = self.routs
+            bb1 = num1.routs
+            to_ret = CompoundRout(self.routs + num1.routs, "merge")
+            return to_ret
         else :
             bb1 = self.clone()
             for index in range(len(bb1.routs)):
